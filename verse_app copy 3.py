@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import Menu
 
 import pythonbible as bible
 
 from docx import Document
+
+from tkinter import filedialog
 
 
 BibleVersions = ["KJV", "NIV"]
@@ -161,9 +164,8 @@ if __name__ == "__main__":
         fullPageDisplay.insert("1.0", toDisplayInFull)
 
 
+    def writeToDoc():
 
-    def export():
-        
         challenge = Document()
 
         challenge.add_heading("Test Challenge", level = 1)
@@ -191,12 +193,61 @@ if __name__ == "__main__":
                 paragraph.add_run("\n")
 
 
-        challenge.save("test1")
+        file_path = filedialog.asksaveasfilename(defaultextension=".docx", filetypes=[("Word Documents", "*.docx"), ("All Files", "*.*")])
+        if file_path:
+            challenge.save(file_path)
+
+
+    def export():
+
+        exportWindow = tk.Toplevel(mainWindow)
+        exportWindow.title("Export")
+        exportWindow.geometry("400x300")
+
+        exportWindow.grid_columnconfigure(0)
+        exportWindow.grid_columnconfigure(1)
+        exportWindow.grid_rowconfigure(0)
+        exportWindow.grid_rowconfigure(1)
+        exportWindow.grid_rowconfigure(2)
+
+
+        exportedVersionChoices = ttk.OptionMenu(exportWindow, selectedVersion, BibleVersions[0], *BibleVersions)
+        exportedVersionChoices.grid(row = 0, column = 0, columnspan = 2, sticky = "nsew", padx = 10, pady = 10)
+
+        cancelButton = ttk.Button(exportWindow, text = "Cancel", command = lambda: exportWindow.destroy())
+        cancelButton.grid(row = 2, column = 0, padx = 10, pady = 10, sticky = "nsew")
+
+        exportButton = ttk.Button(exportWindow, text = "Export", command = writeToDoc)
+        exportButton.grid(row = 2, column = 1, padx = 10, pady = 10, sticky = "nsew")
+
+
+        exportWindow.mainloop()
+
+    def open():
+        pass
+
+    def save():
+        pass
+
+        
 
     mainWindow = tk.Tk()
     mainWindow.geometry('1000x600')
     mainWindow.title("Memory Verse Challenge Maker")
-    mainWindow.configure(borderwidth = 20)
+
+     #menu configuration
+    menuBar = Menu(mainWindow)
+    mainWindow.configure(borderwidth = 20, menu = menuBar)
+
+   
+
+    file = Menu(menuBar)
+    menuBar.add_cascade(label = "File", menu = file)
+    file.add_command(label = "Open", command = open())
+    file.add_command(label = "Save", command = open())
+    file.add_command(label="Exit", command= mainWindow.quit)
+
+
 
     mainWindow.grid_columnconfigure(0, weight=3)  
     mainWindow.grid_columnconfigure(1, weight=1) 
